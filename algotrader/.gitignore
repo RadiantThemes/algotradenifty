@@ -1,0 +1,23 @@
+# Ignore python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environment
+venv/
+env/
+.env
+
+# Ignore sensitive configuration files
+config.py
+
+# Ignore IDE files
+.idea/
+.vscode/
+
+# Ignore log files
+*.log
+
+# Ignore trade data
+trades.json

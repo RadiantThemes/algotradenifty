@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="60">
+    <title>AlgoTrading Bot Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333; margin: 20px; }
+        .container { max-width: 1200px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1, h2 { color: #444; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #eef; }
+        .summary { display: flex; justify-content: space-around; background: #eef; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .summary-item { text-align: center; }
+        .summary-item h3 { margin: 0 0 5px 0; }
+        .profit { color: #28a745; }
+        .loss { color: #dc3545; }
+        .alert { padding: 15px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px; margin-bottom: 20px; animation: blinker 1.5s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0.5; } }
+        .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #777; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AlgoTrading Bot Dashboard</h1>
+
+        {% if last_alert %}
+        <div class="alert">
+            <strong>ALERT!</strong> {{ last_alert }}
+        </div>
+        {% endif %}
+
+        <div class="summary">
+            <div class="summary-item">
+                <h3>Available Margin</h3>
+                <p>₹ {{ "{:,.2f}".format(margins) }}</p>
+            </div>
+            <div class="summary-item">
+                <h3>Total P&L</h3>
+                <p class="{{ 'profit' if total_pl >= 0 else 'loss' }}">₹ {{ "{:,.2f}".format(total_pl) }}</p>
+            </div>
+        </div>
+
+        <h2>Open Positions</h2>
+        {% if positions %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Instrument</th>
+                        <th>Qty</th>
+                        <th>Avg. Price</th>
+                        <th>LTP</th>
+                        <th>P&L</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pos in positions %}
+                    <tr>
+                        <td>{{ pos.tradingsymbol }}</td>
+                        <td>{{ pos.quantity }}</td>
+                        <td>{{ "{:,.2f}".format(pos.average_price) }}</td>
+                        <td>{{ "{:,.2f}".format(pos.last_price) }}</td>
+                        <td class="{{ 'profit' if pos.pnl >= 0 else 'loss' }}">₹ {{ "{:,.2f}".format(pos.pnl) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No open positions.</p>
+        {% endif %}
+
+        <h2>Trade Log</h2>
+        {% if trades %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Instrument</th>
+                        <th>Type</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for trade in trades | reverse %}
+                    <tr>
+                        <td>{{ trade.timestamp }}</td>
+                        <td>{{ trade.symbol }}</td>
+                        <td>{{ trade.type }}</td>
+                        <td>{{ "{:,.2f}".format(trade.price) }}</td>
+                        <td>{{ trade.quantity }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No trades logged yet.</p>
+        {% endif %}
+
+        <div class="footer">
+            Last updated: {{ last_updated }}
+        </div>
+    </div>
+</body>
+</html>

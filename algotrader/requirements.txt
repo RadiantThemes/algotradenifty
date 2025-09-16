@@ -1,0 +1,6 @@
+kiteconnect
+pandas
+pandas-ta
+Flask
+schedule
+gunicorn
