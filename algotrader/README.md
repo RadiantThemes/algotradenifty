@@ -40,41 +40,30 @@ pip install -r requirements.txt
 
 1.  Go to the [Kite Connect Developer portal](https://developers.kite.trade/).
 2.  Create a new app. You will receive an `api_key` and `api_secret`.
-3.  Set the "Redirect URL" for your app to `http://127.0.0.1:5000/` (or any other local URL). This is important for the authentication step.
+3.  Set the "Redirect URL" for your app to `http://127.0.0.1:5000/callback`. **Note:** Ensure the URL ends with `/callback`.
 
 ### Step 3: Configure the Bot
 
-Open the `algotrader/settings.py` file and fill in your details. This is the main configuration file for the bot.
+Open the `algotrader/settings.py` file and fill in your details.
 
 -   **`API_KEY`**: Your Zerodha app's API key.
 -   **`API_SECRET`**: Your Zerodha app's API secret.
--   **`ACCESS_TOKEN`**: Leave this as `"YOUR_ACCESS_TOKEN"` for now.
--   **`TRADE_QUANTITY`**: Set the number of lots you want to trade.
--   Review and adjust other parameters like `STOP_LOSS_PERCENT`, `STRIKE_SELECTION_OFFSET`, and indicator settings as you see fit.
+-   **`ACCESS_TOKEN`**: You can leave this empty. The dashboard will populate it automatically.
+-   Review and adjust all other trading and strategy parameters to your preference.
 
-### Step 4: Generate Your Daily Access Token
-
-Zerodha requires you to log in manually once per day to generate an `access_token`. A helper script is provided to make this easy.
-
-1.  Run the script from the `algotrader` directory:
-    ```bash
-    python generate_access_token.py
-    ```
-2.  The script will print a URL. Copy this URL and paste it into your web browser.
-3.  Log in to your Zerodha account.
-4.  After logging in, you will be redirected to the URL you set in Step 2. The URL in your browser's address bar will now contain a `request_token`. It will look something like this: `http://127.0.0.1:5000/?request_token=YOUR_REQUEST_TOKEN&action=login&status=success`.
-5.  Copy the long `request_token` value from the URL.
-6.  Paste it back into the terminal where the script is waiting.
-7.  The script will then generate and print your `access_token`.
-8.  Copy this `access_token` and paste it into the `settings.py` file for the `ACCESS_TOKEN` variable.
-
-You must repeat this process every morning before you start the bot.
-
-### Step 5: Run the Bot and Dashboard
+### Step 4: Run the Bot and Dashboard
 
 You need to run the bot and the dashboard in two separate terminal windows.
 
-**Terminal 1: Run the Main Bot**
+**Terminal 1: Run the Dashboard FIRST**
+
+It is recommended to start the dashboard first to handle the login process. Navigate to the `algotrader` directory and run:
+
+```bash
+python dashboard.py
+```
+
+**Terminal 2: Run the Main Bot**
 
 Navigate to the `algotrader` directory and run:
 
@@ -82,14 +71,10 @@ Navigate to the `algotrader` directory and run:
 python main.py
 ```
 
-You will see log messages indicating that the bot has started and is waiting for the market to open or for its next cycle.
+**Step 5: Login and Start Trading**
 
-**Terminal 2: Run the Dashboard**
-
-Navigate to the `algotrader` directory and run:
-
-```bash
-python dashboard.py
-```
-
-Now, open your web browser and go to `http://127.0.0.1:5000`. You will see the dashboard, which will auto-refresh every 60 seconds to show the latest data.
+1.  Open your web browser and go to `http://127.0.0.1:5000`.
+2.  You will see a "Login with Zerodha" button. Click it.
+3.  You will be redirected to the Zerodha login page. Log in with your credentials.
+4.  After a successful login, you will be redirected back to the dashboard. The dashboard will now show your account details, and the bot running in the other terminal will be authenticated and ready to trade.
+5.  The bot will start executing trades automatically on its next cycle when market conditions are met.
