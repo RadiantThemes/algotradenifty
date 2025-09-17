@@ -11,7 +11,7 @@ ACCESS_TOKEN = "YOUR_ACCESS_TOKEN"
 
 # --- 2. Core Trading Parameters ---
 TRADE_QUANTITY = 1          # The number of lots to trade for each position.
-PRODUCT_TYPE = "MIS"        # Product type for orders (e.g., "MIS" for intraday, "NRML" for overnight).
+PRODUCT_TYPE = "NRML"       # Product type for orders (e.g., "MIS" for intraday, "NRML" for overnight).
 ORDER_TYPE = "MARKET"       # Order type ("MARKET" or "LIMIT")
 EXCHANGE = "NFO"            # The exchange to trade on.
 INDEX = "NIFTY"             # The underlying index.
