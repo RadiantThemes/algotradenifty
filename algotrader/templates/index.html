@@ -20,19 +20,30 @@
         .alert { padding: 15px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px; margin-bottom: 20px; animation: blinker 1.5s linear infinite; }
         @keyframes blinker { 50% { opacity: 0.5; } }
         .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #777; }
+        .login-container { text-align: center; margin-top: 50px; }
+        .login-btn { background-color: #3572d8; color: white; padding: 15px 25px; text-decoration: none; border-radius: 5px; font-size: 1.2em; }
+        .emergency-zone { border: 2px dashed #dc3545; padding: 15px; margin-top: 30px; border-radius: 5px; text-align: center; }
+        .emergency-btn { background-color: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 1em; cursor: pointer; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>AlgoTrading Bot Dashboard</h1>
 
-        {% if last_alert %}
-        <div class="alert">
-            <strong>ALERT!</strong> {{ last_alert }}
-        </div>
-        {% endif %}
+        {% if not is_authenticated %}
+            <div class="login-container">
+                <h2>Please Login to Continue</h2>
+                <p>You need to authenticate with Zerodha to view the dashboard and run the bot.</p>
+                <a href="{{ url_for('login') }}" class="login-btn">Login with Zerodha</a>
+            </div>
+        {% else %}
+            {% if last_alert %}
+            <div class="alert">
+                <strong>ALERT!</strong> {{ last_alert }}
+            </div>
+            {% endif %}
 
-        <div class="summary">
+            <div class="summary">
             <div class="summary-item">
                 <h3>Available Margin</h3>
                 <p>₹ {{ "{:,.2f}".format(margins) }}</p>
@@ -98,10 +109,22 @@
         {% else %}
             <p>No trades logged yet.</p>
         {% endif %}
+        <div style="text-align: center; margin: 20px;">
+            <a href="{{ url_for('history') }}">View Full Trade History</a>
+        </div>
 
         <div class="footer">
             Last updated: {{ last_updated }}
         </div>
+
+        <div class="emergency-zone">
+            <h2>Emergency Stop</h2>
+            <p>This will attempt to square off ALL open positions and cancel all pending SL orders immediately.</p>
+            <form action="{{ url_for('square_off') }}" method="post" onsubmit="return confirm('ARE YOU SURE you want to square off all positions? This action cannot be undone.');">
+                <button type="submit" class="emergency-btn">SQUARE OFF ALL POSITIONS</button>
+            </form>
+        </div>
+        {% endif %}
     </div>
 </body>
 </html>

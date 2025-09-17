@@ -18,8 +18,7 @@ class ZerodhaClient:
         self.instruments = None
         try:
             self.kite = KiteConnect(api_key=settings.API_KEY)
-            if settings.ACCESS_TOKEN != "YOUR_ACCESS_TOKEN":
-                self.kite.set_access_token(settings.ACCESS_TOKEN)
+            self.kite.set_access_token(settings.ACCESS_TOKEN)
             logging.info("KiteConnect client initialized.")
         except Exception as e:
             logging.error(f"Error initializing KiteConnect client: {e}")
@@ -241,6 +240,16 @@ class ZerodhaClient:
             logging.error(f"Failed to get positions: {e}")
             return None
 
+    def get_orders(self):
+        """
+        Retrieves the list of all orders for the day.
+        """
+        try:
+            return self.kite.orders()
+        except Exception as e:
+            logging.error(f"Failed to get orders: {e}")
+            return []
+
     def get_order_average_price(self, order_id):
         """
         Retrieves the average execution price for a completed order.
@@ -257,20 +266,21 @@ class ZerodhaClient:
 
 
 if __name__ == '__main__':
+    # This is a test block to check client functionality.
+    # It will only work if you have a valid ACCESS_TOKEN in settings.py,
+    # which you can get by running the dashboard and logging in.
     logging.basicConfig(level=logging.INFO)
 
-    # This test will only work if you have a valid ACCESS_TOKEN in settings.py
-    if settings.ACCESS_TOKEN == "YOUR_ACCESS_TOKEN":
-        print("Please fill in your ACCESS_TOKEN in settings.py to run the test.")
-    else:
-        client = ZerodhaClient()
-        if client.is_authenticated():
-            print("Successfully authenticated.")
-            ce, pe = client.find_options_for_trading()
-            if ce and pe:
-                print(f"Found contracts for trading: CE={ce}, PE={pe}")
-            else:
-                print("Could not find contracts for trading.")
+    print("--- Running ZerodhaClient Test ---")
+    client = ZerodhaClient()
+    if client.is_authenticated():
+        print("SUCCESS: Client is authenticated.")
+
+        print("\n--- Testing Instrument Selection ---")
+        ce, pe = client.find_options_for_trading()
+        if ce and pe:
+            print(f"SUCCESS: Found contracts for trading: CE={ce}, PE={pe}")
         else:
-            print("Authentication failed. Please check your API key and secret in settings.py.")
-            print("You may need to run generate_access_token.py to get a new access token.")
+            print("FAILURE: Could not find contracts for trading.")
+    else:
+        print("FAILURE: Client is not authenticated. Please login via the dashboard.")
